@@ -177,10 +177,20 @@ void spiridonov::intersect_dict(std::istream& in, dictionaries_t& dicts)
 {
   std::string new_name, first_name, second_name;
   in >> new_name >> first_name >> second_name;
+  if (dicts.find(first_name) == dicts.end() ||
+    dicts.find(second_name) == dicts.end())
+  {
+    std::cerr << "<DICTIONARY NOT FOUND>\n";
+    return;
+  }
+  if (dicts.find(new_name) != dicts.end())
+  {
+    std::cerr << "<NAME IS BUSY>\n";
+    return;
+  }
   const auto& first = dicts.at(first_name);
   const auto& second = dicts.at(second_name);
   dict_t res;
-
   for (const auto& pair : first)
   {
     if (second.find(pair.first) != second.end())
@@ -189,6 +199,10 @@ void spiridonov::intersect_dict(std::istream& in, dictionaries_t& dicts)
     }
   }
   dicts.insert({ new_name, res });
+  if (res.empty())
+  {
+    std::cout << "<DICTIONARY IS EMPTY>\n";
+  }
 }
 
 void spiridonov::diff_dict(std::istream& in, dictionaries_t& dicts)
